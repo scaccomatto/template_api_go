@@ -1,0 +1,86 @@
+definitions:
+  apihttp.CreateDataRequest:
+    properties:
+      name:
+        example: mario
+        type: string
+      value:
+        example: 1
+        type: integer
+    type: object
+  apperrors.HttpError:
+    properties:
+      code:
+        type: integer
+      details:
+        type: string
+      message:
+        type: string
+      metaData: {}
+    type: object
+  data.Data:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      value:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /data:
+    post:
+      consumes:
+      - application/json
+      description: Create data.
+      parameters:
+      - description: Data name
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/apihttp.CreateDataRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.Data'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.HttpError'
+      tags:
+      - Data
+  /data/{dataId}:
+    get:
+      consumes:
+      - application/json
+      description: Get data.
+      parameters:
+      - description: The data id
+        in: path
+        name: dataId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.Data'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.HttpError'
+      tags:
+      - Data
+swagger: "2.0"

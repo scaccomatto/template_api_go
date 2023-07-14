@@ -1,0 +1,4 @@
+HTTP: 
+  HOST_PORT: :8081
+  SHUTDOWN_TIMEOUT: 30s
+  BASE_PATH: /template/v1

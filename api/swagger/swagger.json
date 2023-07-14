@@ -1,0 +1,134 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/data": {
+            "post": {
+                "description": "Create data.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data"
+                ],
+                "parameters": [
+                    {
+                        "description": "Data name",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/apihttp.CreateDataRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.Data"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/{dataId}": {
+            "get": {
+                "description": "Get data.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The data id",
+                        "name": "dataId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.Data"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.HttpError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "apihttp.CreateDataRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "mario"
+                },
+                "value": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "apperrors.HttpError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "metaData": {}
+            }
+        },
+        "data.Data": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
