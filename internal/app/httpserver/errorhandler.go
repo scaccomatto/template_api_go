@@ -2,9 +2,10 @@ package httpserver
 
 import (
 	"net/http"
-	"template.com/restapi/internal/pkg/apperrors"
 
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"template.com/restapi/internal/pkg/apperrors"
 )
 
 func HTTPErrorHandler() echo.HTTPErrorHandler {
