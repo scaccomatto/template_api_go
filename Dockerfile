@@ -1,4 +1,4 @@
-FROM golang:1.18-buster AS dependencies
+lFROM golang:1.18-buster AS dependencies
 
 WORKDIR /app
 
