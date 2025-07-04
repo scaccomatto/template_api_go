@@ -2,57 +2,77 @@ package app
 
 import (
 	"context"
-	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
+	"fmt"
+	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
-	"template.com/restapi/internal/app/httpserver"
-	"template.com/restapi/internal/app/httpserver/handlers"
-	"template.com/restapi/internal/pkg/apperrors"
-	"template.com/restapi/internal/pkg/services/data"
+	_ "template.com/restapi/api/swagger"
+	"template.com/restapi/internal/appmiddleware"
+	"template.com/restapi/internal/conf"
+	"template.com/restapi/internal/handler"
+	"template.com/restapi/internal/logger"
+	"template.com/restapi/internal/repository"
+	"template.com/restapi/internal/service"
 
-	"template.com/restapi/internal/pkg/configuration"
+	"time"
 )
 
-func Start() error {
-	c := context.TODO()
-	ctx, stopService := context.WithCancel(c)
+func Start() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
-	defer stopService()
-
-	appId := uuid.New()
-	log.Info().Msgf("starting up app instance with id:%v", appId)
-	defer log.Info().Msgf("app instance %v stopped successfully", appId)
-
-	if err := configuration.LoadAppConfig(); err != nil {
-		log.Error().Err(err).Msg("no environment config found, using default config")
-		return apperrors.Builder().Message("no config found").Build()
+	// configuration
+	appConfig, err := conf.LoadConfig("")
+	if err != nil {
+		logger.L.Error("no configuration found")
 	}
 
-	dataServices := data.NewService()
-	httpServer := httpserver.New(dataServices)
+	// server
+	e := echo.New()
+	base := fmt.Sprintf("%s/%s", appConfig.BasePath, appConfig.Version)
 
-	handlers.Init(httpServer)
+	//docs.SwaggerInfo.BasePath = base
 
-	go httpServer.Start(ctx, stopService)
-	defer httpServer.Shutdown(ctx)
+	serverGroup := e.Group(base)
 
-	termChan := make(chan os.Signal, 1)
-	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM)
+	appmiddleware.Add(e)
 
-	var ctxError error
+	// DI: db -> repo -> services -> handler
+	//
+	//database pool to manage all the connections to the DB
+	dbPool, err := repository.NewConnection("", appConfig)
+	if err != nil {
+		logger.L.Error("connection issue", "error:", err)
+		os.Exit(1)
+	}
+	// repository for direct injection
+	repoUser := repository.NewUserDb(dbPool.Db)
 
-terminate:
-	for {
-		select {
-		case <-termChan:
-			break terminate
-		case <-ctx.Done():
-			ctxError = ctx.Err()
-			break terminate
+	// Service for direct injection
+	us := service.NewUserService(repoUser)
+
+	// Handler for pair requests and services
+	_ = handler.NewUserHandle(us, serverGroup)
+
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	// Start and graceful shutdown server
+	go func() {
+		err := e.Start(fmt.Sprintf(":%d", appConfig.Port))
+		if err != nil && err != http.ErrServerClosed {
+			logger.L.Error("shutting down the server", "error:", err)
+			os.Exit(1)
 		}
-	}
+	}()
 
-	return ctxError
+	<-ctx.Done()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		logger.L.Error("job done. shutting down the server", "error:", err)
+		os.Exit(1)
+	} else {
+		logger.L.Info("job done. shutting down the server")
+	}
 }

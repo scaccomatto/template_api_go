@@ -1,86 +1,81 @@
+basePath: /api/v1
 definitions:
-  apihttp.CreateDataRequest:
+  apperr.StatusError:
     properties:
-      name:
-        example: mario
+      client_msg:
+        description: sometimes we do not want to expose to the client some error details
         type: string
-      value:
-        example: 1
+      err: {}
+      status:
         type: integer
     type: object
-  apperrors.HttpError:
-    properties:
-      code:
-        type: integer
-      details:
-        type: string
-      message:
-        type: string
-      metaData: {}
-    type: object
-  data.Data:
+  model.User:
     properties:
       id:
+        type: integer
+      lastname:
         type: string
       name:
         type: string
-      value:
-        type: integer
     type: object
+host: localhost:8081
 info:
   contact: {}
+  description: This is a template api for a service with DB
+  title: Template Api
+  version: "1.0"
 paths:
-  /data:
+  /users:
     post:
       consumes:
       - application/json
-      description: Create data.
       parameters:
-      - description: Data name
+      - description: User payload
         in: body
-        name: Body
+        name: user
         required: true
         schema:
-          $ref: '#/definitions/apihttp.CreateDataRequest'
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/data.Data'
+            $ref: '#/definitions/model.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperrors.HttpError'
+            $ref: '#/definitions/apperr.StatusError'
         "500":
           description: Internal Server Error
-          schema:
-            $ref: '#/definitions/apperrors.HttpError'
+          schema: {}
       tags:
-      - Data
-  /data/{dataId}:
+      - AddUser
+  /users/{id}:
     get:
       consumes:
       - application/json
-      description: Get data.
       parameters:
-      - description: The data id
+      - description: User ID
         in: path
-        name: dataId
+        name: id
         required: true
-        type: string
+        type: integer
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/data.Data'
+            $ref: '#/definitions/model.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperrors.HttpError'
+            $ref: '#/definitions/apperr.StatusError'
         "500":
           description: Internal Server Error
-          schema:
-            $ref: '#/definitions/apperrors.HttpError'
+          schema: {}
       tags:
-      - Data
+      - UserGetId
 swagger: "2.0"
