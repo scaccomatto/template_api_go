@@ -12,7 +12,10 @@ docker-clean:
 	docker system prune --volumes --force
 
 swagger-docs:
-	swag init -d internal/app/httpserver -g httpserver.go -o api/swagger --parseVendor --parseDependency --md ./docs/
+	swag init -d internal/handler -g main.go -o api/swagger --parseDependency
 	
 test:
 	go test ./...
+
+file_tree:
+	tree -I vendor

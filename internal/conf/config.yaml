@@ -1,0 +1,12 @@
+app_name: rest_template
+db:
+  name: "foo"
+  port: 3306
+  url: "localhost"
+  user:  #Setting sensitive values as env variables
+  pass:  #Setting sensitive values as env variables
+
+default_time_out: 10
+port: 8081
+base_path: api
+version: v1
