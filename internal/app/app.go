@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -32,10 +33,9 @@ func Start() {
 	// server
 	e := echo.New()
 	base := fmt.Sprintf("%s/%s", appConfig.BasePath, appConfig.Version)
-
-	//docs.SwaggerInfo.BasePath = base
-
 	serverGroup := e.Group(base)
+	// adding swagger definition
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	appmiddleware.Add(e)
 
@@ -56,11 +56,10 @@ func Start() {
 	// Handler for pair requests and services
 	_ = handler.NewUserHandle(us, serverGroup)
 
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	// Start and graceful shutdown server
 	go func() {
 		err := e.Start(fmt.Sprintf(":%d", appConfig.Port))
-		if err != nil && err != http.ErrServerClosed {
+		if err != nil && !errors.As(err, &http.ErrServerClosed) {
 			logger.L.Error("shutting down the server", "error:", err)
 			os.Exit(1)
 		}

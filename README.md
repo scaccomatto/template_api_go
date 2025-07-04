@@ -1,6 +1,8 @@
 # Golang rest api example
 
 This is just and example of a simple API that I can use as template.  
+
+## Overview
 This is a "layered architecture" application. Here a quick description:
 * cmd: it contains the main file that points to the application staring point.
 * api: it contains swagger docs.
@@ -50,10 +52,7 @@ This is a "layered architecture" application. Here a quick description:
 ```
 
 
-
-
 ## How to
-
 In the Makefile there are a few shortcuts to build and running the server using docker and docker compose  
 You can find Swagger documentation in api folder 
 
