@@ -40,7 +40,7 @@ func getViperConfig(path string) (*AppConfig, error) {
 	l := logger.L.WithGroup("viper_config")
 	// Set up viper to read the config.yaml file
 	if path == "" {
-		path = "./internal/conf/"
+		path = "./conf/"
 	}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")

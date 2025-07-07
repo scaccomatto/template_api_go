@@ -1,32 +1,38 @@
-lFROM golang:1.18-buster AS dependencies
+FROM golang:1.24.2 AS  build-stage
 
 WORKDIR /app
 
-COPY api ./api
 COPY cmd ./cmd
-COPY config ./config
+COPY go.mod go.sum ./
+COPY api ./api
 COPY internal ./internal
-COPY vendor ./vendor
-COPY go.mod ./
-COPY go.sum ./
+COPY conf ./conf
 
-FROM dependencies AS build
-RUN CGO_ENABLED=0 GOOS=linux go build -o app ./cmd/
+RUN CGO_ENABLED=0 GOOS=linux go build -o template-app ./cmd/
 
-FROM alpine:latest
-RUN sed -i 's/https/http/' /etc/apk/repositories
-RUN apk add --no-cache \
-                curl \
-                wget \
-                bash \
-                openssh \
-                npm \
-                git \
-                jq
+
+# Run the tests in the container
+FROM build-stage AS run-test-stage
+RUN go test -v ./...
+
+
+# Deploy the application binary into a lean image
+FROM gcr.io/distroless/base-debian11 AS build-release-stage
 
 WORKDIR /app
-COPY --from=build /app/app .
-COPY --from=build /app/config/app_config.yaml ./config/app_config.yaml
 
-EXPOSE 80
-CMD ["./app"]
+COPY --from=build-stage /app/template-app /app/template-app
+COPY --from=build-stage /app/conf/config.yaml /app/conf/config.yaml
+
+EXPOSE 8081
+
+USER nonroot:nonroot
+
+
+#RUN apk add --no-cache \
+#                curl \
+#                bash \
+#                openssh \
+#                git
+
+ENTRYPOINT ["./template-app"]
