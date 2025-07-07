@@ -1,9 +1,9 @@
 build-image:
-	docker build . -t rest-api
+	docker build . -t template-api
 
 up:
-	docker build . -t rest-api
-	docker-compose -f docker-compose.yml -p services up --build --detach
+	docker build . -t template-api
+	docker-compose -f docker-compose.yml -p services up
 
 down:
 	docker-compose -f docker-compose.yml -p services down --remove-orphans
