@@ -8,6 +8,13 @@ This is a "layered architecture" application. Here a quick description:
 * api: it contains swagger docs.
 * internal: it contains all code that I want to keep it private: business logic, services, etc...
 
+Since there is just one service, all the dependency injection is manages in the app.Start() function.  
+```shell
+DI: database -> repository -> service -> handler
+```
+Each component will just have one responsibility. 
+
+
 ```shell
 ├── api
 │        └── swagger
