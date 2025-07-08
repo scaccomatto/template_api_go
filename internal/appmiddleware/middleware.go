@@ -45,7 +45,7 @@ func Add(server *echo.Echo) {
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
 			corrId := fmt.Sprintf("%s", c.Request().Context().Value(HeaderCorrelationID))
 			if v.Error == nil {
-				logger.L.Error("REQUEST",
+				logger.L.Info("REQUEST", // we can set this one also as debug
 					slog.String("method", c.Request().Method),
 					slog.String("corr-id", corrId),
 					slog.String("uri", v.URI),

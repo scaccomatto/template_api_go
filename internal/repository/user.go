@@ -30,7 +30,6 @@ func (u *UserDb) AddUser(ctx context.Context, newUser model.User) (model.User, e
 	if res.Error != nil {
 		return model.User{}, res.Error
 	}
-	fmt.Println(newUser.Id)
 	return newUser, nil
 }
 
