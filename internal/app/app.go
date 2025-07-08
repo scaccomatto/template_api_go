@@ -59,7 +59,7 @@ func Start() {
 	// Start and graceful shutdown server
 	go func() {
 		err := e.Start(fmt.Sprintf(":%d", appConfig.Port))
-		if err != nil && !errors.As(err, &http.ErrServerClosed) {
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.L.Error("shutting down the server", "error:", err)
 			os.Exit(1)
 		}

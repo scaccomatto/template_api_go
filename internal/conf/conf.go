@@ -61,7 +61,7 @@ func getViperConfig(path string) (*AppConfig, error) {
 	var c AppConfig
 	err := viper.Unmarshal(&c)
 	if err != nil {
-		l.Error("unable to decode into struct, %v", err)
+		l.Error("unable to decode into struct", "error:", err)
 		return nil, err
 	}
 
