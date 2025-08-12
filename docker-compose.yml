@@ -7,15 +7,15 @@ services:
     ports:
       - 8081:8081
     depends_on:
-      mysql:
+      mysql_api:
         condition: service_healthy
     env_file:
       - ./local_env/local.env
     environment:
       - "HTTP_HOST_ADDRESS=0.0.0.0:8081"
 
-  mysql:
-    container_name: mysql
+  mysql_api:
+    container_name: mysql_api
     image: mysql:8.0.36
     restart: always
     volumes:
@@ -23,7 +23,7 @@ services:
     env_file:
       - ./local_env/local.env
     ports:
-      - 3306:3306
+      - 3307:3306
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pSuperS3cur3" ]
       interval: 10s

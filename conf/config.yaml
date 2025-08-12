@@ -1,8 +1,8 @@
 app_name: rest_template
 db:
   name: "foo"
-  port: 3306
-  url: "mysql"
+  port: 3307
+  url: "mysql_api"
   user:  #Setting sensitive values as env variables
   pass:  #Setting sensitive values as env variables
 

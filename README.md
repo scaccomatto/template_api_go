@@ -61,6 +61,6 @@ Each component will just have one responsibility.
 
 ## How to
 In the Makefile there are a few shortcuts to build and running the server using docker and docker compose  
-You can find Swagger documentation in api folder 
-
+You can find Swagger documentation in api folder  
+Swagger api: http://localhost:8081/swagger/index.html
 

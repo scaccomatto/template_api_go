@@ -3,10 +3,10 @@ build-image:
 
 up:
 	docker build . -t template-api
-	docker-compose -f docker-compose.yml -p services up
+	docker-compose -f docker-compose.yml -p templateapi up
 
 down:
-	docker-compose -f docker-compose.yml -p services down --remove-orphans
+	docker-compose -f docker-compose.yml -p templateapi down --remove-orphans
 
 docker-clean:
 	docker system prune --volumes --force
